@@ -1,0 +1,8 @@
+.vs
+bin
+out
+cmake-build-debug
+cmake-build-debug-coverage
+CMakeFiles
+.idea
+LastCoverageResults.log

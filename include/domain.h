@@ -11,8 +11,10 @@ typedef struct Transaction{
     unsigned char day_of_month;
     unsigned value;
     signed char type;
+    unsigned id;
 } Transaction;
 
 Transaction make_transaction(unsigned value, signed char type, unsigned char day_of_month);
+Transaction copy_transaction(Transaction* original);
 
 #endif //LAB2_DOMAIN_H

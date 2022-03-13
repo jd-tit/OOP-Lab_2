@@ -7,8 +7,11 @@
 
 #include <stdbool.h>
 
-bool is_valid_day_of_month(int day_of_month);
-bool is_valid_transaction_value(int value);
-bool is_valid_transaction_type(int type);
+bool is_valid_day_of_month(long day_of_month);
+bool is_valid_transaction_value(long value);
+bool is_valid_transaction_type(long type);
+bool is_valid_order_type(long order_by);
+bool is_valid_sort_order(long sort_order);
+bool is_valid_order(long order);
 
 #endif //LAB2_VALIDATE_H

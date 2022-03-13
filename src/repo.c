@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <memory.h>
 
 #include "repo.h"
 
@@ -10,12 +11,9 @@
 int repo_add_transaction(Repository *repo, Transaction transaction) {
     // Add a Transaction to the Repository
     // pre: none extra
-    // post: `transaction` is added to
-    if(repo->crt_len == repo->max_len){
+    // post: `transaction` is added to the repository
+    if(push_back(repo->transactions, &transaction) == EXIT_FAILURE)
         return EXIT_FAILURE;
-    }
-    repo->transaction_log[repo->crt_len] = transaction;
-    repo->crt_len += 1;
     return EXIT_SUCCESS;
 }
 
@@ -25,13 +23,22 @@ Repository* make_repository(void){
      * @post: Return a pointer to an empty Repository
      */
     Repository* repo = malloc(sizeof(Repository));
-    repo->crt_len = 0;
-    repo->max_len = MAX_LEN;
+    repo->transactions = make_vector(TRANSACTION);
     return repo;
 }
 
 void destroy_repository(Repository* repo){
-    //free(repo->transaction_log); // We aren't using dynamic allocation yet
+    destroy_vector(repo->transactions);
     free(repo);
     repo = NULL;
+}
+
+Transaction* repo_find_by_id(Repository* repo,  long id){
+    Transaction* contents = repo->transactions->contents;
+    for(size_t i = 0; i < repo->transactions->crt_len; ++i){
+        if(contents[i].id == id){
+            return &contents[i];
+        }
+    }
+    return NULL;
 }

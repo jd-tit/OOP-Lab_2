@@ -7,10 +7,10 @@
 #include "domain.h"
 
 
-signed char restrict_type(int type);
+signed char restrict_type(long type);
 
-unsigned char restrict_day_of_month(int dom);
+unsigned char restrict_day_of_month(long dom);
 
-unsigned restrict_transaction_value(int value);
+unsigned restrict_transaction_value(long value);
 
 #endif //LAB2_RESTRICT_TYPES_H

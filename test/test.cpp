@@ -13,6 +13,8 @@ extern "C" {
 #include "validate.h"
 #include "restrict_types.h"
 #include "ctrl.h"
+#include "sort.h"
+#include "vector.h"
 }
 
 TEST(TestDomain, TestMakeTransaction){
@@ -100,16 +102,90 @@ TEST(TestCTRL,TestMakeBankCtrl){
 TEST(TestCTRL, TestCtrlAddTransaction){
     BankCtrl* b_ctrl = make_BankCtrl();
 
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, 3000, 30, -1),  EXIT_SUCCESS);
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, -1, 30, -1),  -1);
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, -3000, 0, -1),  -1);
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, 3000, 0, -1),  -2);
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, 3000, 30, 0),  -3);
-    EXPECT_EQ(ctrl_add_transaction(b_ctrl, 3000, 40, -1),  -2);
+    char valid_value[] = "3000";
+    char invalid_value[] = "-1";
+
+    char valid_day[] = "30";
+    char invalid_day_1[] = "0";
+    char invalid_day_2[] = "40";
+
+    char valid_type[] = "-1";
+    char invalid_type[] = "0";
+
+
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, valid_day, valid_type),  EXIT_SUCCESS);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, invalid_value, valid_day, valid_type), -1);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, invalid_day_1, valid_type), -2);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, invalid_day_2, valid_type), -2);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, valid_day, invalid_type), -3);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, invalid_day_2, valid_type), -2);
+    EXPECT_EQ(ctrl_add_transaction(b_ctrl, valid_value, invalid_day_2, invalid_type), -2);
 
     free(b_ctrl->repo);
     free(b_ctrl);
 }
 
+TEST(TestSort, TestQuicksort){
+    Transaction list[7];
+    int start_value = 30;
+    int day = 30;
+    for(int i = 0; i < 7; ++i){
+        list[i].value = start_value;
+        list[i].day_of_month = day--;
+        list[i].type = IN;
+        start_value *= 2;
+    }
+    quicksort(list, 0, 6, cmp_transactions_value, ASC);
 
+    for(int i = 0; i <= 5; ++i){
+        EXPECT_LE(list[i].value, list[i+1].value);
+    }
 
+    quicksort(list, 0, 6, cmp_transactions_value, DESC);
+    for(int i = 0; i <= 5; ++i){
+        EXPECT_GE(list[i].value, list[i+1].value);
+    }
+
+    quicksort(list, 0, 6, cmp_transactions_day_of_month, ASC);
+
+    for(int i = 0; i <= 5; ++i){
+        EXPECT_LE(list[i].day_of_month, list[i+1].day_of_month);
+    }
+
+    quicksort(list, 0, 6, cmp_transactions_day_of_month, DESC);
+    for(int i = 0; i <= 5; ++i){
+        EXPECT_GE(list[i].day_of_month, list[i+1].day_of_month);
+    }
+}
+
+TEST(TestVector, TestCreate){
+    Vector* v = make_vector(DataTypes::TRANSACTION);
+    EXPECT_EQ(v->max_len, INITIAL_MAX_SIZE);
+    EXPECT_EQ(v->crt_len, 0);
+    EXPECT_EQ(v->element_size, sizeof(Transaction));
+}
+
+TEST(TestVector, TestExtend){
+    Vector* v = make_vector(DataTypes::TRANSACTION);
+    extend(v);
+    EXPECT_EQ(v->max_len, INITIAL_MAX_SIZE * EXTEND_FACTOR);
+    EXPECT_EQ(v->element_size, sizeof(Transaction));
+}
+
+TEST(TestVector, TestPushBack){
+    Vector* v = make_vector(DataTypes::TRANSACTION);
+    Transaction t = make_transaction(3000, 1, 30);
+    for(int i = 0; i <= v->max_len * 2; ++i){
+        push_back(v, &t);
+    }
+
+    for(int i = 0; i <= v->max_len * 2; ++i){
+        Transaction* transactions = (Transaction*)v->contents;
+        EXPECT_EQ(transactions[i].day_of_month, 30);
+        EXPECT_EQ(transactions[i].value, 3000);
+        EXPECT_EQ(transactions[i].type, 1);
+    }
+
+    EXPECT_EQ(v->max_len, INITIAL_MAX_SIZE * EXTEND_FACTOR);
+    EXPECT_EQ(v->element_size, sizeof(Transaction));
+}

@@ -214,13 +214,13 @@ void ui_add_transaction(BankCtrl* ctrl){
             case EXIT_FAILURE: //malloc failed
                 puts("Failed to create transaction; ran out of memory.");
                 break;
-            case -1: //value not valid
+            case VALUE_ERROR: //value not valid
                 printf("Value '%s' is not valid\n", value_buff);
                 break;
-            case -2: //day_of_month not valid
+            case DAY_OF_MONTH_ERROR: //day_of_month not valid
                 printf("Day of month '%s' is not valid\n", day_of_month_buff);
                 break;
-            case -3: //transaction type not valid
+            case TRANSACTION_TYPE_ERROR: //transaction type not valid
                 printf("Transaction type '%s' is not valid\n", type_buff);
                 break;
             case EXIT_SUCCESS:
@@ -254,16 +254,16 @@ void ui_modify_transaction(BankCtrl* b_ctrl){
         case EXIT_FAILURE: //malloc failed
             puts("Transaction not found. Maybe you've used the wrong id?");
             break;
-        case -1: //value not valid
+        case VALUE_ERROR: //value not valid
             printf("Value '%s' is not valid\n", value_buff);
             break;
-        case -2: //day_of_month not valid
+        case DAY_OF_MONTH_ERROR: //day_of_month not valid
             printf("Day of month '%s' is not valid\n", day_of_month_buff);
             break;
-        case -3: //transaction type not valid
+        case TRANSACTION_TYPE_ERROR: //transaction type not valid
             printf("Transaction type '%s' is not valid\n", type_buff);
             break;
-        case -4:
+        case TRANSACTION_ID_ERROR:
             printf("Transaction ID '%s' is not valid\n", id_buff);
             break;
         case EXIT_SUCCESS:
@@ -285,7 +285,7 @@ void ui_delete_transaction(BankCtrl* b_ctrl){
         case EXIT_FAILURE: //malloc failed
             puts("Transaction not found. Maybe you've used the wrong id?");
             break;
-        case -1:
+        case TRANSACTION_ID_ERROR:
             printf("Transaction ID '%s' is not valid.\n", id_buff);
             break;
         case EXIT_SUCCESS:
@@ -304,7 +304,7 @@ void ui_filter_transactions_by_type(BankCtrl* b_ctrl){
     Vector* matching_trans;
     int exit_value = ctrl_get_transactions_matching_type(b_ctrl, type_buff, &matching_trans);
 
-    if(exit_value == -1){
+    if(exit_value == TRANSACTION_TYPE_ERROR){
         printf("Transaction type '%s' is not valid.", type_buff);
         return;
     }
@@ -336,10 +336,10 @@ void ui_filter_transactions_by_value(BankCtrl* b_ctrl){
     Vector* matching_trans;
     int exit_value = ctrl_get_transactions_matching_value(b_ctrl, value_buff, selection_buff, &matching_trans);
 
-    if(exit_value == -1){
+    if(exit_value == VALUE_ERROR){
         printf("Transaction value '%s' is not valid.\n", value_buff);
         return;
-    } else if (exit_value == -2){
+    } else if (exit_value == NOT_ABOVE_OR_BELOW_ERROR){
         printf("'%s' is not '1' or '2'.", selection_buff);
         return;
     }

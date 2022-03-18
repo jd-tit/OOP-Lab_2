@@ -30,33 +30,29 @@ BankCtrl* make_BankCtrl(void){
 }
 
 int ctrl_add_transaction(BankCtrl *ctrl, char *value_buff, char *day_of_month_buff, char *type_buff) {
-    /* Controller function for adding transactions to the database.
-     * pre: void
-     * post: A transaction with the given data is added to the database.
-     * */
     // Transform input buffers into usable (long int) values
     long value, day_of_month, type;
 
     if(!str_to_s_long(value_buff, &value))
-        return -1;
+        return VALUE_ERROR;
 
     if(!str_to_s_long(day_of_month_buff, &day_of_month))
-        return -2;
+        return DAY_OF_MONTH_ERROR;
 
     if(!str_to_s_long(type_buff, &type))
-        return -3;
+        return TRANSACTION_TYPE_ERROR;
 
     // Check for validity & restrict to proper intervals
     if(!is_valid_transaction_value(value))
-        return -1;
+        return VALUE_ERROR;
     unsigned r_value = restrict_transaction_value(value);
 
     if(!is_valid_day_of_month(day_of_month))
-        return -2;
+        return DAY_OF_MONTH_ERROR;
     unsigned char r_day_of_month = restrict_day_of_month(day_of_month);
 
     if(!is_valid_transaction_type(type))
-        return -3;
+        return TRANSACTION_TYPE_ERROR;
     signed char r_type = restrict_type(type);
 
     Transaction transaction = make_transaction(r_value, r_type, r_day_of_month);
@@ -66,9 +62,6 @@ int ctrl_add_transaction(BankCtrl *ctrl, char *value_buff, char *day_of_month_bu
 }
 
 Transaction* ctrl_get_transactions(BankCtrl* b_ctrl, size_t* size){
-    /**
-     * Return all transactions found in database.
-     */
     *size = b_ctrl->repo->transactions->crt_len;
     return b_ctrl->repo->transactions->contents;
 }
@@ -117,28 +110,28 @@ int ctrl_modify_transaction(BankCtrl* b_ctrl, char* id_buff, char* value_buff, c
     long value, day_of_month, type, id;
 
     if(!str_to_s_long(value_buff, &value))
-        return -1;
+        return VALUE_ERROR;
 
     if(!str_to_s_long(day_of_month_buff, &day_of_month))
-        return -2;
+        return DAY_OF_MONTH_ERROR;
 
     if(!str_to_s_long(type_buff, &type))
-        return -3;
+        return TRANSACTION_TYPE_ERROR;
 
     if(!str_to_s_long(id_buff, &id))
-        return -4;
+        return TRANSACTION_ID_ERROR;
 
     // Check for validity & restrict to proper intervals
     if(!is_valid_transaction_value(value))
-        return -1;
+        return VALUE_ERROR;
     unsigned r_value = restrict_transaction_value(value);
 
     if(!is_valid_day_of_month(day_of_month))
-        return -2;
+        return DAY_OF_MONTH_ERROR;
     unsigned char r_day_of_month = restrict_day_of_month(day_of_month);
 
     if(!is_valid_transaction_type(type))
-        return -3;
+        return TRANSACTION_TYPE_ERROR;
     signed char r_type = restrict_type(type);
 
     Transaction* t = repo_find_by_id(b_ctrl->repo, id);
@@ -154,7 +147,7 @@ int ctrl_modify_transaction(BankCtrl* b_ctrl, char* id_buff, char* value_buff, c
 int ctrl_delete_transaction(BankCtrl* b_ctrl, char* id_buff){
     long id;
     if(!str_to_s_long(id_buff, &id))
-        return -1;
+        return TRANSACTION_ID_ERROR;
     Transaction* t = repo_find_by_id(b_ctrl->repo, id);
     if(t == NULL)
         return EXIT_FAILURE;
@@ -168,12 +161,11 @@ int ctrl_delete_transaction(BankCtrl* b_ctrl, char* id_buff){
 
 int ctrl_get_transactions_matching_type(BankCtrl* b_ctrl, char *transaction_type_buff, Vector **result){
     long transaction_type;
-    if(!str_to_s_long(transaction_type_buff, &transaction_type)){
-        return -1;
-    }
+    if(!str_to_s_long(transaction_type_buff, &transaction_type))
+        return TRANSACTION_TYPE_ERROR;
 
     if(!is_valid_transaction_type(transaction_type))
-        return -1;
+        return TRANSACTION_TYPE_ERROR;
 
     signed char type = restrict_type(transaction_type);
 
@@ -191,16 +183,16 @@ int ctrl_get_transactions_matching_type(BankCtrl* b_ctrl, char *transaction_type
 int ctrl_get_transactions_matching_value(BankCtrl* b_ctrl, char* value_buff, char*  selection_buff, Vector** result){
     long value, selection;
     if(!str_to_s_long(value_buff, &value))
-        return -1;
+        return VALUE_ERROR;
 
     if(!is_valid_transaction_value(value))
-        return -1;
+        return VALUE_ERROR;
 
     if(!str_to_s_long(selection_buff, &selection))
-        return -2;
+        return NOT_ABOVE_OR_BELOW_ERROR;
 
-    if(!is_valid_order(selection))
-        return -2;
+    if(!is_Above_or_Below(selection))
+        return NOT_ABOVE_OR_BELOW_ERROR;
 
     unsigned int value_r = restrict_transaction_value(value);
 

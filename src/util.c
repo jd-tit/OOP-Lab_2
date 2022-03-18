@@ -9,11 +9,6 @@
 #include "domain.h"
 #include "vector.h"
 
-
-void seed_RNG(void){
-    srand(time(NULL));
-}
-
 Transaction make_random_transaction(void){
     unsigned int value = (rand() % 100 + 1) * 1000;
     signed char type = 0;

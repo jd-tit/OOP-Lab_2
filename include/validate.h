@@ -6,12 +6,14 @@
 #define LAB2_VALIDATE_H
 
 #include <stdbool.h>
+#define ABOVE 1
+#define BELOW 2
 
 bool is_valid_day_of_month(long day_of_month);
 bool is_valid_transaction_value(long value);
 bool is_valid_transaction_type(long type);
 bool is_valid_order_type(long order_by);
 bool is_valid_sort_order(long sort_order);
-bool is_valid_order(long order);
+bool is_Above_or_Below(long order);
 
 #endif //LAB2_VALIDATE_H

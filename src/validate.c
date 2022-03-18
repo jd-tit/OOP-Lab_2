@@ -45,8 +45,8 @@ bool is_valid_order_type(long order_by){
     return true;
 }
 
-bool is_valid_order(long order){
-    if(order != 1 && order != 2)
+bool is_Above_or_Below(long order){
+    if(order != ABOVE && order != BELOW)
         return false;
     return true;
 }

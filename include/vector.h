@@ -17,12 +17,39 @@ typedef struct Vector {
     void* contents;
 } Vector;
 
+/**
+ * Create a Vector
+ * @param type - currently ignored, as only Transaction vectors were necessary
+ * @return A pointer to the new vector object
+ */
 Vector* make_vector(char type);
+
+/**
+ * Deallocate a vector
+ * @param old_vector - the vector to be deallocated
+ */
 void destroy_vector(Vector* old_vector);
+
+/**
+ * Add an element ot the vector
+ * @param vector - the vector to add to
+ * @param element - a pointer to the element to be added
+ * @return The exit code, either EXIT_SUCCESS or EXIT_FAILURE
+ */
 int push_back(Vector* vector, void* element);
-void* at(Vector* vector, size_t position);
-void* pop_back(Vector* vector);
+
+/**
+ * Increase the length of a vector by a fixed factor
+ * @param vector - the vector to be adjusted
+ * @return The exit code, either EXIT_SUCCESS or EXIT_FAILURE.
+ */
 int extend(Vector* vector);
+
+/**
+ * Copy a vector and its contents.
+ * @param v - the vector to be copied
+ * @return A pointer to the new Vector, or NULL if the copy failed.
+ */
 Vector* copy_vector(Vector* v);
 
 #endif //LAB2_VECTOR_BASE_H

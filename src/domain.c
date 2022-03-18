@@ -4,11 +4,9 @@
 
 #include "domain.h"
 
+static unsigned id = 0;
+
 Transaction make_transaction(unsigned value, signed char type, unsigned char day_of_month){
-    // Create a transaction object
-    // pre: none extra
-    // post: return a Transaction object configured with the given arguments
-    static unsigned id = 0;
     Transaction transaction;
     transaction.day_of_month = day_of_month;
     transaction.type = type;
@@ -19,11 +17,16 @@ Transaction make_transaction(unsigned value, signed char type, unsigned char day
 }
 
 Transaction copy_transaction(Transaction* original){
-    unsigned int id = original->id;
+    unsigned int id_local = original->id;
     signed char type = original->type;
     unsigned char day_of_month = original->day_of_month;
     unsigned int value = original->value;
     Transaction t = make_transaction(value, type, day_of_month);
-    t.id = id;
+    --id;
+    t.id = id_local;
     return t;
+}
+
+void reset_id_counter(void){
+    id = 0;
 }

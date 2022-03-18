@@ -33,14 +33,6 @@ void quicksort(Transaction *list, int l, int r, cmp_ptr cmp, int dir){
     }
 }
 
-int cmp_int(void* l, void* r){
-    if(*(int*)l < *(int*)r)
-        return -1;
-    if(*(int*)l == *(int*)r)
-        return 0;
-    return 1;
-}
-
 int cmp_transactions_day_of_month(Transaction *l, Transaction *r){
     Transaction* t1 = l;
     Transaction* t2 = r;
